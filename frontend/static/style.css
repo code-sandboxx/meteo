@@ -1,0 +1,403 @@
+/**************************************************/
+/*                     RESET                      */
+/**************************************************/
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;    
+}
+
+input, button{
+    border-style: none;
+}
+
+a{
+    text-decoration: none;
+}
+
+/**************************************************/
+/*                      ROOT                      */
+/**************************************************/
+
+:root{
+    --black: black;
+    --primary-purple: rgb(45, 24, 69);
+    --purple-dark: rgba(55, 18, 97, 0.4);
+    --primary-purple-transparent: rgba(54, 22, 88, 0.4);
+    --white-transparent: rgba(255, 255, 255, 0.7);
+    --black-semi-transparent:  rgba(0, 0, 0, 0.5);
+    --light-purple: rgba(183, 168, 200, 0.9);
+    --off-white: rgb(250, 247, 245);
+    --brown: rgb(130, 30, 30);
+    --light-orange: rgb(244, 164, 117);
+    --light-green: rgb(140, 234, 143);
+    --light-blue: rgb(217, 248, 255);    
+    --spacing-tiny: 5px;
+    --spacing-tiny-small: 10px;
+    --spacing-small: 15px;
+    --spacing-small-medium: 30px;
+    --spacing-medium: 50px;
+    --spacing-medium-large: 70px;
+    --spacing-large: 100px;
+    --spacing-xlarge: 150px;
+}
+
+/**************************************************/
+/*                    LAYOUT                      */
+/**************************************************/
+
+main{
+    display: flex;
+    justify-content: space-between
+}
+
+.top_bar{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo_title,
+.header_wrapper,
+.tile_details_container_wrapper{
+    display: flex;
+}
+
+.search_bar{
+    display: flex;
+    flex-basis: 400px;    
+}
+
+.day_details{
+    display: flex;
+    justify-content: flex-start;
+}
+
+.details, 
+.details_wrapper,
+.details_header,
+.tile_details_container,
+.weather_tiles_wrapper,
+.weather_tiles_section
+{
+    display: flex;
+    flex-direction: column;      
+}
+
+.weather_tiles_section{
+    flex-grow: 1;
+    justify-content: flex-end
+}
+
+.details_header{    
+    align-items: left;
+}
+
+.weather_tiles_container{
+    display: inline-grid;  
+    grid-template-columns: repeat(5, 150px [col-start]);  
+    overflow-x: auto;
+    white-space: nowrap;
+    column-gap: var(--spacing-small-medium);
+    justify-content: center;
+}
+
+/**************************************************/
+/*                   COMPONENTS                   */
+/**************************************************/
+
+body{
+    width: 100%;       
+}
+
+main{
+    background-image: linear-gradient(to top, rgba(5, 2, 7, 0.5), transparent),
+                      linear-gradient(to right, rgba(5, 2, 7, 0.7), transparent),
+                      url('../img/Downtown_seen_from_Mont-Royal.jpg');   
+    background-repeat: no-repeat;  
+    background-size: cover;  
+    background-position: center;  
+    padding-top: var(--spacing-medium);     
+   
+}
+
+/*--------------------------------------*/
+/*               TOP BAR                */
+/*--------------------------------------*/
+
+.top_bar{
+    background-color: var(--primary-purple);
+    padding-top: var(--spacing-small-medium);      
+    padding-bottom: var(--spacing-small-medium);
+    padding-left: var(--spacing-medium-large);
+    padding-right: var(--spacing-medium-large);
+}
+
+.logo_title img{
+    width: 50px;
+}
+
+.logo_title h1{
+    margin-left: var(--spacing-small-medium);
+}
+
+.search_bar input[type="search"]{
+    height: var(--spacing-small-medium);
+    border-top-left-radius: var(--spacing-tiny);
+    border-bottom-left-radius: var(--spacing-tiny);
+    padding-left: var(--spacing-tiny-small);    
+    width: 100%;    
+    transition: 0.3s ease;
+}
+
+.search_bar input[type="search"]:focus{
+    outline: none;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    width: 700px;
+}
+
+.search_bar button{
+    height: var(--spacing-small-medium); 
+    border-top-right-radius: var(--spacing-tiny);
+    border-bottom-right-radius: var(--spacing-tiny);
+    padding-left: var(--spacing-tiny-small);
+    padding-right: var(--spacing-tiny-small);    
+    background-color: var(--light-orange);
+    box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+    transition: 0.4s;
+}
+
+.search_bar button:hover{
+    background-color: rgb(238, 184, 77);
+}
+
+.search_bar button:active{
+    background-color: var(--light-green);
+}
+
+
+/*--------------------------------------*/
+/*              DETAILS                 */
+/*--------------------------------------*/
+
+.details{    
+    border-top-right-radius: var(--spacing-small);
+    border-bottom-right-radius: var(--spacing-small);       
+    padding-bottom: var(--spacing-medium);    
+    box-shadow: rgba(22, 10, 31, .7) 0 70px 50px 50px inset;
+    backdrop-filter: blur(1px);
+    overflow: hidden;
+}
+
+.details .city{
+    margin-left: var(--spacing-medium-large);
+    margin-top: var(--spacing-medium);
+    margin-bottom: var(--spacing-small);
+}
+
+.header_wrapper{
+    padding-left: var(--spacing-medium-large);
+    padding-top: var(--spacing-small);     
+    padding-bottom: var(--spacing-small);     
+}
+
+.details_wrapper *{
+    line-height: var(--spacing-small-medium);
+    padding-left: var(--spacing-medium-large);  
+    margin-right: var(--spacing-medium);     
+}
+ 
+.details_wrapper > :nth-child(odd) {
+    background-color: var(--black-semi-transparent);
+    border-radius: var(--spacing-tiny);
+}
+
+.weather_icon img{
+    object-fit: contain;
+    width: 100%;   
+}
+
+.weather_icon_large img{   
+   width: 150px;  
+}
+
+.details_header .day,
+.details_header .date,
+.details_header .weather_status_description{
+    margin-bottom: var(--spacing-small);
+}
+
+/*--------------------------------------*/
+/*         WEATHER TILES GRID           */
+/*--------------------------------------*/
+
+.weather_tiles_wrapper{   
+    border-radius: var(--spacing-tiny-small);
+    margin-left: var(--spacing-medium-large);
+    margin-right: var(--spacing-medium-large);
+    box-shadow: rgba(22, 10, 31, .7) 0 70px 50px 50px inset;
+    backdrop-filter: blur(1px);
+    justify-content: center;
+}
+
+.weather_tiles_wrapper h1{   
+    margin-top: var(--spacing-small-medium);   
+    text-align: center;      
+}
+
+.weather_tile{
+    margin-top: var(--spacing-medium);
+    margin-bottom: var(--spacing-medium);
+    border: 1px solid var(--purple-dark);
+    border-radius: var(--spacing-tiny-small);   
+    background-color: var(--light-purple);    
+    overflow: hidden;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    transition: all 0.3s ease;
+}
+
+.weather_tile:hover{
+    background-color: rgb(210, 182, 249);
+    transform: translateY(-5px) scale(1.05);     
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);            
+}
+
+.tile_header_wrapper{
+    background-color: var(--purple-dark);
+    padding: var(--spacing-small);       
+}
+
+.tile_header_wrapper > :first-child{    
+    margin-bottom: var(--spacing-tiny-small);
+}
+
+.tile_details_container_wrapper{
+    padding: var(--spacing-small);
+}
+
+.tile_details_container *{
+    margin-bottom: var(--spacing-tiny-small);
+}
+
+
+/*--------------------------------------*/
+/*                 FOOTER               */
+/*--------------------------------------*/
+
+footer{
+    background-color: var(--primary-purple);    
+    padding: var(--spacing-small-medium);
+}
+
+footer h1{
+    text-align: center;
+}
+
+
+/**************************************************/
+/*                  TYPOGRAPHY                    */
+/**************************************************/
+
+.logo_title h1{
+    font-size: 35px;
+    font-family: 'Maven Pro', sans-serif;
+    font-weight: 500;
+    color: var(--off-white);
+}
+
+.search_bar button{
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--black);
+}    
+
+.search_bar input[type="search"]{
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;    
+}   
+
+.weather_tiles_wrapper h1{
+    font-size: 25px;
+    font-family: 'Maven Pro', sans-serif;
+    color: var(--off-white);
+    font-weight: 500;
+}
+
+.details{
+    color: var(--off-white);
+}
+
+.header_wrapper{
+    font-family: 'Maven Pro', sans-serif;
+    font-weight: 500;    
+}
+
+.details .city{
+    font-family: 'Maven Pro', sans-serif;
+    font-size: 45px; 
+    color: var(--light-orange);
+    font-weight: 500; 
+    letter-spacing: 1px;
+}
+
+.details .day, 
+.details .date,
+.details .weather_status_description{
+    font-size: 25px; 
+    color: var(--off-white); 
+    font-weight: 500; 
+    letter-spacing: 1px;
+}
+
+.weather_tile .day, 
+.weather_tile .weather_status_description{
+    font-size: 19px;      
+}
+
+.weather_tile{
+    font-family: 'Work Sans', sans-serif;    
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--primary-purple);    
+}
+
+.weather_tile .date{
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.details_wrapper{
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;  
+    letter-spacing: 1px; 
+}
+
+.tile_header_wrapper{
+    color: var(--off-white);
+}
+
+footer h1{
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--off-white);
+    letter-spacing: 1px;
+}
+
+
+
+/**************************************************/
+/*                    UTILITIES                   */
+/**************************************************/
+
+
+
+
+/**************************************************/
+/*               RESPONSIVE STYLES                */
+/**************************************************/
