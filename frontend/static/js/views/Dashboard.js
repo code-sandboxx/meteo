@@ -4,15 +4,23 @@ export default class extends AbstractView{
 
     constructor(params){
 
-        super(params)
-        this.setTitle("Dashboard")
+        super(params);
+        this.setTitle("Dashboard");
         this.lat = null;
         this.lon = null;
+        this.cityData;
+        this.country = null;
+        this.city = null;
          
-        if (params && params.lat && params.lon) {
+        if (params && params.lat && params.lon && params.country && params.city) {
             this.lat = params.lat;
             this.lon = params.lon;
+            this.country = params.country;
+            this.city = params.city;
         }     
+
+        console.log(this.city, this.country)
+        console.log(params)
     }
 
     getGeolocation() {

@@ -20,16 +20,15 @@ export default class extends AbstractView{
             // if geolocation is available
             navigator.geolocation.getCurrentPosition(async (position) => {
                this.lat = position.coords.latitude;
-               this.lon = position.coords.longitude;
-               console.log(`Latitude: ${this.lat}, Longitude: ${this.lon}`);
+               this.lon = position.coords.longitude;               
 
                //get the city and country name
                await this.loadData();
-               this.country = this.cityData.address.country;
-               this.city = this.cityData.address.city;
-
+               this.country = this.cityData.features[0].properties.country;
+               this.city = this.cityData.features[0].properties.city;
+               console.log(this.country, this.city, this.lat, this.lon)
                // Redirect to the dashboard route with lat and lon parameters
-               navigateTo(`/dashboard/lat=${this.lat}&lon=${this.lon}/${this.country}/${this.city}`);               
+               navigateTo(`/dashboard/lat=${this.lat}&lon=${this.lon}&country=${this.country}&city=${this.city}`);               
 
             }, function(error) {
                console.error("Error occurred while fetching geolocation", error);
@@ -41,7 +40,7 @@ export default class extends AbstractView{
     } 
     
     async loadData() {
-        this.cityData = await this.getData(`https://geocode.maps.co/reverse?lat=${this.lat}&lon=${this.lon}`);
+        this.cityData = await this.getData(`https://api.geoapify.com/v1/geocode/reverse?lat=${this.lat}&lon=${this.lon}&apiKey=868dc020ef9a48648f958a38385f3626`);
     }
 
     async getData(url){

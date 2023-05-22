@@ -25,7 +25,7 @@ const router = async () => {
         {path: "/", views: [Dashboard]},        
         {path: "/home", views: [Dashboard]},
         {path: "/location", views: [LocationView]},
-        {path: "/dashboard/lat=:lat&lon=:lon", views: [Details, Dashboard] }
+        {path: "/dashboard/lat=:lat&lon=:lon&country=:country&city=:city", views: [Details, Dashboard] }
     ]
 
     // 2 - match function
