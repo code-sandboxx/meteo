@@ -50,11 +50,11 @@ const router = async () => {
    const views = match.route.views || [];  // Array of views associated with the route  
    const viewInstances = views.map(view => new view(getParams(match))); // Create an instance for each view
 
-   // Check if lat and lon are detected
+   // Checks if lat and lon are detected
    if (viewInstances.length > 0 && viewInstances.every(view => view.lat !== null && view.lon !== null))  {
-        const htmlPromises = viewInstances.map(viewInstance => viewInstance.getHtml());  // Transform viewInstances into htmlPromises
-        const htmlArray = await Promise.all(htmlPromises); // Wait for all HTML promises to resolve
-        const html = htmlArray.join(''); // Concatenate HTML strings into a single string
+        const htmlPromises = viewInstances.map(viewInstance => viewInstance.getHtml());  // Transforms viewInstances into htmlPromises
+        const htmlArray = await Promise.all(htmlPromises); // Waits for all HTML promises to resolve
+        const html = htmlArray.join(''); // Concatenates HTML strings into a single string
         document.querySelector('#app').innerHTML = await html;
     } else {  
         // If not detected the view LocationView will be generated    

@@ -12,10 +12,7 @@ export default class extends AbstractView{
         if (params && params.lat && params.lon) {
             this.lat = params.lat;
             this.lon = params.lon;
-        } 
-              
-        console.log(params.lat)      
-        console.log(params.lon)    
+        }     
     }
 
     getGeolocation() {
