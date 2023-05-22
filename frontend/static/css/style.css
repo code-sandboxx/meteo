@@ -22,13 +22,13 @@ a{
 
 :root{
     --black: black;
-    --primary-purple: rgb(45, 24, 69);
+    --primary-purple: rgb(38, 16, 63);
     --purple-dark: rgba(55, 18, 97, 0.4);
     --primary-purple-transparent: rgba(54, 22, 88, 0.4);
     --white-transparent: rgba(255, 255, 255, 0.7);
     --black-semi-transparent:  rgba(0, 0, 0, 0.5);
     --white-semi-transparent:  rgba(255, 255, 255, 0.4);
-    --light-purple: rgba(183, 168, 200, 0.9);
+    --light-purple: rgba(200, 178, 225, 0.8);
     --off-white: rgb(250, 247, 245);
     --brown: rgb(130, 30, 30);
     --light-orange: rgb(244, 164, 117);
@@ -103,7 +103,7 @@ a{
     grid-template-columns: repeat(5, 150px [col-start]);  
     overflow-x: auto;
     white-space: nowrap;
-    column-gap: var(--spacing-small-medium);
+    column-gap: var(--spacing-medium);
     justify-content: center;
 }
 
@@ -117,12 +117,11 @@ body{
 
 main{
     background-image: linear-gradient(to top, rgba(5, 2, 7, 0.5), transparent),
-                      linear-gradient(to right, rgba(5, 2, 7, 0.7), transparent),
-                      url('../img/Downtown_seen_from_Mont-Royal.jpg');   
+                      linear-gradient(to right, rgba(5, 2, 7, 0.7), transparent);
     background-repeat: no-repeat;  
     background-size: cover;  
-    background-position: center;  
-    padding-top: var(--spacing-medium);    
+    background-position: center;      
+    animation: pan 400s infinite linear;
 }
 
 /*--------------------------------------*/
@@ -256,11 +255,12 @@ main{
 }
 
 .details{    
+    background-image: linear-gradient(to bottom, var(--primary-purple), transparent);
     border-top-right-radius: var(--spacing-small);
     border-bottom-right-radius: var(--spacing-small);       
-    padding-bottom: var(--spacing-medium);    
-    box-shadow: rgba(22, 10, 31, .7) 0 70px 50px 50px inset;
-    backdrop-filter: blur(1px);
+    padding-bottom: var(--spacing-medium);   
+    box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;     
+    backdrop-filter: blur(2px);
     overflow: hidden;
 }
 
@@ -279,12 +279,13 @@ main{
 .details_wrapper *{
     line-height: var(--spacing-small-medium);
     padding-left: var(--spacing-medium-large);  
+    padding-right: var(--spacing-small);
     margin-right: var(--spacing-medium);     
 }
  
 .details_wrapper > :nth-child(odd) {
     background-color: var(--black-semi-transparent);
-    border-radius: var(--spacing-tiny);
+    
 }
 
 .weather_icon img{
@@ -307,12 +308,13 @@ main{
 /*--------------------------------------*/
 
 .weather_tiles_wrapper{   
+    background-image: linear-gradient(to bottom, var(--primary-purple), transparent);
+    box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
     border-radius: var(--spacing-small);
     margin-left: var(--spacing-medium-large);
     margin-right: var(--spacing-medium-large);
-    margin-bottom: var(--spacing-medium);
-    box-shadow: rgba(22, 10, 31, .7) 0 70px 50px 50px inset;
-    backdrop-filter: blur(1px);
+    margin-bottom: var(--spacing-medium);    
+    backdrop-filter: blur(2px);
     justify-content: center;
 }
 
@@ -328,8 +330,9 @@ main{
     border-radius: var(--spacing-tiny-small);   
     background-color: var(--light-purple);    
     overflow: hidden;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
     transition: all 0.3s ease;
+    backdrop-filter: blur(2px);
 }
 
 .weather_tile:hover{
@@ -447,9 +450,13 @@ footer h1{
 .details_wrapper{
     font-family: 'Work Sans', sans-serif;
     font-weight: 400;
-    font-size: 16px;  
-    letter-spacing: 1px; 
+    font-size: 18px;  
+    letter-spacing: 1px;     
 }
+
+.details_wrapper *{
+    line-height: var(--spacing-medium);
+}    
 
 .tile_header_wrapper{
     color: var(--off-white);

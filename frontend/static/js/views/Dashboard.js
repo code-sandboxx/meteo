@@ -1,4 +1,5 @@
 import AbstractView from "./AbstractView.js";
+import { navigateTo } from "../index.js";
 
 export default class extends AbstractView{    
 
@@ -10,17 +11,17 @@ export default class extends AbstractView{
         this.lon = null;
         this.cityData;
         this.country = null;
-        this.city = null;
+        this.city = null;        
          
         if (params && params.lat && params.lon && params.country && params.city) {
             this.lat = params.lat;
             this.lon = params.lon;
             this.country = params.country;
             this.city = params.city;
-        }     
-
-        console.log(this.city, this.country)
-        console.log(params)
+        }
+        else{
+            navigateTo(`/location`);  
+        } 
     }
 
     getGeolocation() {
@@ -39,7 +40,32 @@ export default class extends AbstractView{
         }
     } 
 
-    async getHtml(){ 
+    async loadData() {
+        let lowercaseCityName = this.city.toLowerCase();
+        this.cityData = await this.getData(`https://api.teleport.org/api/urban_areas/slug:${lowercaseCityName}/images/`);
+        
+        // Extracts the large version of the city photo
+        let photoUrl = this.cityData.photos[0].image.mobile;        
+
+        // Creates an image element and set the source to the web version of the photo
+        let cityPhoto = document.createElement('img');
+        cityPhoto.src = photoUrl;    
+
+        // Append the image element to the DOM
+        const photoContainer = document.querySelector("main");       
+        photoContainer.style.backgroundImage = `url(${photoUrl})`;
+       
+    }
+
+    async getData(url){
+        const response = await fetch(url)
+        return response.json();             
+    }   
+
+    async getHtml(){   
+
+        await this.loadData();
+
         return  `
         <section class="weather_tiles_section">
 
