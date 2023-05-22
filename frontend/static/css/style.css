@@ -48,11 +48,6 @@ a{
 /*                    LAYOUT                      */
 /**************************************************/
 
-main{
-    display: flex;
-    justify-content: space-between
-}
-
 .top_bar{
     display: flex;
     flex-direction: row;
@@ -91,6 +86,12 @@ main{
 .weather_tiles_section{
     flex-grow: 1;
     justify-content: flex-end
+}
+
+#app{
+    display: flex;
+    justify-content: space-between;
+    height: 100vh;
 }
 
 .details_header{    
@@ -249,6 +250,11 @@ main{
 /*              DETAILS                 */
 /*--------------------------------------*/
 
+.day_details{
+    margin-top: var(--spacing-medium);
+    margin-bottom: var(--spacing-medium);
+}
+
 .details{    
     border-top-right-radius: var(--spacing-small);
     border-bottom-right-radius: var(--spacing-small);       
@@ -301,9 +307,10 @@ main{
 /*--------------------------------------*/
 
 .weather_tiles_wrapper{   
-    border-radius: var(--spacing-tiny-small);
+    border-radius: var(--spacing-small);
     margin-left: var(--spacing-medium-large);
     margin-right: var(--spacing-medium-large);
+    margin-bottom: var(--spacing-medium);
     box-shadow: rgba(22, 10, 31, .7) 0 70px 50px 50px inset;
     backdrop-filter: blur(1px);
     justify-content: center;
@@ -460,7 +467,7 @@ footer h1{
     font-family: 'Work Sans', sans-serif;
     font-weight: 600;
     font-size: 26px;
-    color: var(--brown);
+    color: var(--black);
     line-height: var(--spacing-medium);
 }
 

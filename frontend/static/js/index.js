@@ -1,6 +1,7 @@
 // 7 - import view
 import LocationView from "./views/LocationView.js"
 import Dashboard from "./views/Dashboard.js"
+import Details from "./views/Details.js"
 
 // 10 - regex
 const pathToRegex = path => new RegExp("^"+ path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$") // transforms a path string into a regular expression that can be used to match routes.
@@ -21,10 +22,10 @@ const getParams = match => {
 const router = async () => {
 
     const routes = [
-        {path: "/", view: Dashboard},        
-        {path: "/home", view: Dashboard},
-        {path: "/location", view: LocationView},
-        {path: "/dashboard/lat=:lat&lon=:lon", view: Dashboard }
+        {path: "/", views: [Dashboard]},        
+        {path: "/home", views: [Dashboard]},
+        {path: "/location", views: [LocationView]},
+        {path: "/dashboard/lat=:lat&lon=:lon", views: [Details, Dashboard] }
     ]
 
     // 2 - match function
@@ -46,13 +47,17 @@ const router = async () => {
     }
     
    // 8 - view rendering
-   const view = new match.route.view(getParams(match));   
+   const views = match.route.views || [];  // Array of views associated with the route  
+   const viewInstances = views.map(view => new view(getParams(match))); // Create an instance for each view
 
    // Check if lat and lon are detected
-    if (view.lat !== null && view.lon !== null) {
-         document.querySelector('#app').innerHTML = await view.getHtml();
+   if (viewInstances.length > 0 && viewInstances.every(view => view.lat !== null && view.lon !== null))  {
+        const htmlPromises = viewInstances.map(viewInstance => viewInstance.getHtml());  // Transform viewInstances into htmlPromises
+        const htmlArray = await Promise.all(htmlPromises); // Wait for all HTML promises to resolve
+        const html = htmlArray.join(''); // Concatenate HTML strings into a single string
+        document.querySelector('#app').innerHTML = await html;
     } else {  
-        // If not detected the view LocationView() will be generated    
+        // If not detected the view LocationView will be generated    
         const locationView = new LocationView();
         document.querySelector('#app').innerHTML = await locationView.getHtml();          
     }       

@@ -6,7 +6,7 @@ export default class extends AbstractView{
     constructor(params){
 
         super(params)
-        this.setTitle("Dashboard")
+        this.setTitle("Location")
         this.lat = null; 
         this.lon = null;   
         this.getGeolocation();    
@@ -18,11 +18,10 @@ export default class extends AbstractView{
             navigator.geolocation.getCurrentPosition((position) => {
                this.lat = position.coords.latitude;
                this.lon = position.coords.longitude;
-               console.log(`Latitude: ${this.lat}, Longitude: ${this.lon}`);
+               //console.log(`Latitude: ${this.lat}, Longitude: ${this.lon}`);
 
                // Redirect to the dashboard route with lat and lon parameters
-               navigateTo(`/dashboard/lat=${this.lat}&lon=${this.lon}`);
-               console.log(`now`);
+               navigateTo(`/dashboard/lat=${this.lat}&lon=${this.lon}`);               
 
             }, function(error) {
                console.error("Error occurred while fetching geolocation", error);
