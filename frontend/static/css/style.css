@@ -27,6 +27,7 @@ a{
     --primary-purple-transparent: rgba(54, 22, 88, 0.4);
     --white-transparent: rgba(255, 255, 255, 0.7);
     --black-semi-transparent:  rgba(0, 0, 0, 0.5);
+    --white-semi-transparent:  rgba(255, 255, 255, 0.4);
     --light-purple: rgba(183, 168, 200, 0.9);
     --off-white: rgb(250, 247, 245);
     --brown: rgb(130, 30, 30);
@@ -80,7 +81,8 @@ main{
 .details_header,
 .tile_details_container,
 .weather_tiles_wrapper,
-.weather_tiles_section
+.weather_tiles_section,
+.message_wrapper
 {
     display: flex;
     flex-direction: column;      
@@ -119,8 +121,73 @@ main{
     background-repeat: no-repeat;  
     background-size: cover;  
     background-position: center;  
-    padding-top: var(--spacing-medium);     
-   
+    padding-top: var(--spacing-medium);    
+}
+
+/*--------------------------------------*/
+/*             LOCATION VIEW            */
+/*--------------------------------------*/
+
+.message{
+    background-image: linear-gradient(to bottom, rgba(160, 59, 228, 0.6), transparent),
+                      linear-gradient(to top, rgba(198, 119, 79, 0.9), transparent),
+                      url('../img/world-map.svg');
+    background-repeat: repeat-x;       
+    background-size: auto 200%; 
+    height: 100%;   
+    padding: var(--spacing-large);               
+    animation: pan 400s infinite linear; 
+}    
+
+.location_view_wrapper{    
+    height: 100vh; 
+    overflow: hidden;    
+}  
+
+@keyframes pan {
+    0% {
+      background-position: 0% 0%;        
+    }
+    50% {
+      background-position: 100% 100%;           
+    }    
+    100% {
+        background-position: 0% 0%;           
+    }  
+}  
+
+.message_wrapper{
+    margin-left: var(--spacing-xlarge);     
+    margin-right: var(--spacing-xlarge);    
+    background-color: var(--white-semi-transparent); 
+    padding: var(--spacing-large);
+    border-radius: var(--spacing-small);
+    backdrop-filter: blur(1px); 
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    
+}    
+
+.message_wrapper img{
+    height: 200px;
+    object-fit: contain;
+    opacity: 0.5;
+    padding-top: var(--spacing-medium-large);
+    animation: pulsate 3s infinite;
+}    
+
+@keyframes pulsate {
+    0% {
+      transform: scale(1);
+      opacity: 0.5;
+    }    
+    60% {
+      transform: scale(1.2);
+      opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
 }
 
 /*--------------------------------------*/
@@ -389,7 +456,13 @@ footer h1{
     letter-spacing: 1px;
 }
 
-
+.message{
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    font-size: 26px;
+    color: var(--brown);
+    line-height: var(--spacing-medium);
+}
 
 /**************************************************/
 /*                    UTILITIES                   */
