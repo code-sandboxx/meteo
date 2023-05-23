@@ -77,8 +77,11 @@ export default class extends AbstractView{
         let formattedCityName = lowercaseCityName.replace(/\s+/g, '-'); // replacing spaces with hyphens - because the API only accepts this format
         this.cityData = await this.getData(`https://api.teleport.org/api/urban_areas/slug:${formattedCityName}/images/`);
         
-        // Extracts the large version of the city photo
-        let photoUrl = this.cityData.photos[0].image.mobile;        
+        // Extracts the large version of the city photo if exists - otherwise uses a default image
+        let photoUrl = this.cityData.photos && this.cityData.photos.length > 0 
+                ? this.cityData.photos[0].image?.mobile 
+                : "/static/img/world-map.svg";
+  
 
         // Creates an image element and set the source to the web version of the photo
         let cityPhoto = document.createElement('img');
