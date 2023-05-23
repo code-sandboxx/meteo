@@ -94,16 +94,20 @@ a{
     height: 100vh;
 }
 
+.tile_details_container{
+    flex-grow: 1;
+}
+
 .details_header{    
     align-items: left;
 }
 
 .weather_tiles_container{
     display: inline-grid;  
-    grid-template-columns: repeat(5, 150px [col-start]);  
-    overflow-x: auto;
+    grid-template-columns: repeat(3, 250px [col-start]);  
+    overflow-y: hidden;
     white-space: nowrap;
-    column-gap: var(--spacing-medium);
+    column-gap: var(--spacing-small-medium);
     justify-content: center;
 }
 
@@ -112,12 +116,12 @@ a{
 /**************************************************/
 
 body{
-    width: 100%;       
+    width: 100%;  
 }
 
 main{
-    background-image: linear-gradient(to top, rgba(5, 2, 7, 0.5), transparent),
-                      linear-gradient(to right, rgba(5, 2, 7, 0.7), transparent);
+    background-image: linear-gradient(to bottom, rgba(160, 59, 228, 0.6), transparent),
+                      linear-gradient(to top, rgba(198, 119, 79, 0.9), transparent);
     background-repeat: no-repeat;  
     background-size: cover;  
     background-position: center;      
@@ -324,15 +328,21 @@ main{
     padding-bottom: var(--spacing-small);     
 }
 
-.details_wrapper *{
-    line-height: var(--spacing-small-medium);
+.details_wrapper *{    
     padding-left: var(--spacing-medium-large);  
     padding-right: var(--spacing-small);
+    padding-top: var(--spacing-tiny);
+    padding-bottom: var(--spacing-tiny);
     margin-right: var(--spacing-medium);     
 }
  
 .details_wrapper > :nth-child(odd) {
     background-color: var(--black-semi-transparent);    
+}
+
+.weather_icon{
+    
+    width: 100px;  
 }
 
 .weather_icon img{
@@ -358,11 +368,13 @@ main{
     background-image: linear-gradient(to bottom, var(--primary-purple), transparent);
     box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
     border-radius: var(--spacing-small);
-    margin-left: var(--spacing-medium-large);
-    margin-right: var(--spacing-medium-large);
-    margin-bottom: var(--spacing-medium);    
+    margin-left: var(--spacing-large);
+    margin-right: var(--spacing-large);
+    margin-bottom: var(--spacing-medium);  
+    padding-bottom: var(--spacing-medium);    
     backdrop-filter: blur(2px);
     justify-content: center;
+    overflow: hidden;    
 }
 
 .weather_tiles_wrapper h1{   
@@ -371,15 +383,15 @@ main{
 }
 
 .weather_tile{
-    margin-top: var(--spacing-medium);
-    margin-bottom: var(--spacing-medium);    
+    margin-top: var(--spacing-medium);      
     border-radius: var(--spacing-tiny-small);   
     background-color: var(--light-purple);    
     overflow: hidden;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
     transition: all 0.3s ease;
     backdrop-filter: blur(2px);
-    border: 1px solid var(--white-semi-transparent);
+    border: 1px solid var(--white-semi-transparent);   
+    height: 200px;
 }
 
 .weather_tile:hover{
@@ -502,7 +514,7 @@ footer h1{
 }
 
 .details_wrapper *{
-    line-height: var(--spacing-medium);
+    line-height: var(--spacing-small-medium);
 }    
 
 .tile_header_wrapper{

@@ -11,13 +11,15 @@ export default class extends AbstractView{
         this.lon = null;
         this.cityData;
         this.country = null;
-        this.city = null;        
+        this.city = null;  
+        this.weatherData;      
+        this.weatherProcessedData;
          
         if (params && params.lat && params.lon && params.country && params.city) {
             this.lat = params.lat;
             this.lon = params.lon;
             this.country = params.country;
-            this.city = params.city;
+            this.city = params.city;            
         }
         else navigateTo(`/location`); 
 
@@ -80,7 +82,7 @@ export default class extends AbstractView{
         // Extracts the large version of the city photo if exists - otherwise uses a default image
         let photoUrl = this.cityData.photos && this.cityData.photos.length > 0 
                 ? this.cityData.photos[0].image?.mobile 
-                : "/static/img/world-map.svg";
+                : "/static/img/cityscape.svg";
   
 
         // Creates an image element and set the source to the web version of the photo
@@ -137,173 +139,149 @@ export default class extends AbstractView{
                 searchItem.textContent = `${district}${searchResult.city}, ${municipality}${county}${province}${state}${country}`;
             }  
             // if the city name is not provided in the search result- hide the empty div
-            else searchItem.style.display = "none";
-            
-            console.log(searchResult)
-           
+            else searchItem.style.display = "none";              
             searchResultsContainer.appendChild(wrappingLink);
 
             //when user clicks on one of the search results
-            searchItem.addEventListener("click", async () => {           
+            searchItem.addEventListener("click", async () => { 
+
                 this.city = searchResult.city; 
+                this.country = searchResult.country;  
+                this.lat = searchResult.lat;
+                this.lon = searchResult.lon;       
+
                 searchResultsContainer.classList.add("hidden");   
-                await this.loadCityImgData();           
+                navigateTo(`/dashboard/lat=${this.lat}&lon=${this.lon}&country=${this.country}&city=${this.city}`);       
             });            
         });    
         
         if (fetchedSearchResults.results.length > 0) {
             searchResultsContainer.classList.remove("hidden");
             searchResultsContainer.classList.add("show");
-            console.log(fetchedSearchResults.results.length);
+            
         } else {
             searchResultsContainer.classList.add("hidden");
             searchResultsContainer.classList.remove("show");
         }
+    } 
+    
+    //******************************************************/
 
-    }    
+    async fetchWeatherData() {
+
+        this.weatherData = await this.getData(`https://api.openweathermap.org/data/2.5/forecast?lat=${this.lat}&lon=${this.lon}&appid=3fe699cb74f81a039afe2bbf82846de7&units=metric`);
+
+        this.handleWeatherData(this.weatherData);
+    }
+    
+    //******************************************************/
+    
+    handleWeatherData(weatherData){
+
+        console.log(weatherData)
+
+        let dates = weatherData.list.map(item => item.dt_txt.split(" ")[0]); // extracts all the dates without time
+
+        let uniqueDates = [...new Set(dates)]; // removes duplicates        
+
+        let maxTempForEachDay = []; // empty array where the max temperature values for each day  will be stored
+        let minTempForEachDay = []; // empty array where the min temperature values for each day  will be stored
+
+        for(let i = 0; i < uniqueDates.length; i++) {
+
+            let date = uniqueDates[i]; // every unique date
+
+            let filteredData = weatherData.list.filter(item => { // filtering out all data that corresponds to the given unique date
+
+                let itemDate = item.dt_txt.split(" ")[0]; // splitting the date value from the time
+                return itemDate === date;
+            });
+
+            let maxTempObj = null;
+            let minTempObj = null;
+
+            for(let j = 0; j < filteredData.length; j++) {
+
+                if(maxTempObj == null || filteredData[j].main.temp_max > maxTempObj.main.temp_max) {
+
+                    maxTempObj = filteredData[j]; // retrieving the biggest number from all max values for a given date
+                }
+
+                if(minTempObj == null || filteredData[j].main.temp_min < minTempObj.main.temp_min) {
+                    
+                    minTempObj = filteredData[j]; // retrieving the lowest number from all min values for a given date
+                }
+            }
+
+            maxTempForEachDay.push(maxTempObj); // adding the max values for each day to the array 
+            minTempForEachDay.push(minTempObj); // adding the max values for each day to the array             
+        }    
+
+        this.weatherProcessedData = {
+            maxTempForEachDay: maxTempForEachDay,
+            minTempForEachDay: minTempForEachDay
+        };
+    }
     
 
     //******************************************************/
 
     async getHtml(){   
 
-        await this.loadCityImgData();
+        console.log(this.weatherProcessedData);
+        console.log(this.lat, this.lon, this.weatherData, this.country, this.city )
 
+        await this.loadCityImgData();      
+        await this.fetchWeatherData();  
+    
+        let weatherTilesHtml = this.weatherProcessedData.maxTempForEachDay.map((data, index) => {
+    
+            const formatDay = (dateString) => {
+                const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const date = new Date(dateString);
+                const today = new Date();
+
+                // displays "Today" if the date is current
+                if (date.toDateString() === today.toDateString()) {
+                    return "Today";
+                }
+                return daysOfWeek[date.getDay()]; // returning the day of the week by index that is returned by getDay()
+            };
+    
+            return `
+                <a href="#">    
+                    <div class="weather_tile">
+                        <div class="tile_header_wrapper">
+                            <h2 class="day">${formatDay(data.dt_txt)}</h2>
+                            <h3 class="date">${data.dt_txt.split(" ")[0]}</h3>  
+                        </div>                
+    
+                        <div class="tile_details_container_wrapper">                 
+    
+                            <div class="tile_details_container"> 
+                                <span class="max_temp">Max: ${data.main.temp_max}°</span>
+                                <span class="min_temp">Min: ${this.weatherProcessedData.minTempForEachDay[index].main.temp_min}°</span>
+                                <span class="weather_status">${data.weather[0].description}</span>
+                            </div>
+    
+                            <div class="weather_icon">
+                                <img src="http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }).join("");
+    
         return  `
         <section class="weather_tiles_section">
-
-        <div class="weather_tiles_wrapper">             
-
-            <h1>5-Day Weather Forecast</h1>
-
-            <div class="weather_tiles_container">            
+            <div class="weather_tiles_wrapper">             
+                <h1>5-Day Weather Forecast</h1>
+                <div class="weather_tiles_container">            
+                    ${weatherTilesHtml}
+                </div>   
+            </div>  
+        </section>`
+    }
         
-                <a href="#">    
-                                    
-                    <div class="weather_tile">
-
-                        <div class="tile_header_wrapper">
-                            <h2 class="day">Today</h2>
-                            <h3 class="date">21/05/2023</h3>  
-                        </div>                
-
-                        <div class="tile_details_container_wrapper">                 
-
-                            <div class="tile_details_container"> 
-                                <span class="max_temp">Max: 25°</span>
-                                <span class="min_temp">Min: 15°</span>
-                                <span class="weather_status">Clear</span>
-                            </div>
-
-                            <div class="weather_icon">
-                                <img src="img/01d@2x (1).png" alt="">
-                            </div>
-                        </div>
-                        
-                    </div>
-                </a>
-                
-                <a href="#">      
-                    <div class="weather_tile">
-
-                        <div class="tile_header_wrapper">
-                        <h2 class="day">Monday</h2>
-                        <h3 class="date">22/05/2023</h3>  
-                        </div>                
-
-                        <div class="tile_details_container_wrapper">                 
-
-                            <div class="tile_details_container"> 
-                                <span class="max_temp">Max: 24°</span>
-                                <span class="min_temp">Min: 10°</span>
-                                <span class="weather_status">Cloudy</span>
-                            </div>
-
-                            <div class="weather_icon">
-                                <img src="img/03d@2x.png" alt="">
-                            </div>
-                        </div>
-                        
-                    </div>
-                </a>    
-                
-                <a href="#">
-                    <div class="weather_tile">
-
-                        <div class="tile_header_wrapper">
-                        <h2 class="day">Tuesday</h2>
-                        <h3 class="date">23/05/2023</h3>  
-                        </div>                
-
-                        <div class="tile_details_container_wrapper">                 
-
-                            <div class="tile_details_container"> 
-                                <span class="max_temp">Max: 20°</span>
-                                <span class="min_temp">Min: 8°</span>
-                                <span class="weather_status">Rain</span>
-                            </div>
-
-                            <div class="weather_icon">
-                                <img src="img/11d@2x.png" alt="">
-                            </div>
-                        </div>
-                        
-                    </div>
-                </a>
-        
-                <a href="#">
-                    <div class="weather_tile">
-
-                        <div class="tile_header_wrapper">
-                        <h2 class="day">Wednesday</h2>
-                        <h3 class="date">24/05/2023</h3>  
-                        </div>                
-
-                        <div class="tile_details_container_wrapper">                 
-
-                            <div class="tile_details_container"> 
-                                <span class="max_temp">Max: 23°</span>
-                                <span class="min_temp">Min: 12°</span>
-                                <span class="weather_status">Clear</span>
-                            </div>
-
-                            <div class="weather_icon">
-                                <img src="img/01d@2x (1).png" alt="">
-                            </div>
-                        </div>
-                        
-                    </div>
-                </a>
-        
-                <a href="#">
-                    <div class="weather_tile">
-
-                        <div class="tile_header_wrapper">
-                        <h2 class="day">Thursday</h2>
-                        <h3 class="date">25/05/2023</h3>  
-                        </div>                
-
-                        <div class="tile_details_container_wrapper">                 
-
-                            <div class="tile_details_container"> 
-                                <span class="max_temp">Max: 25°</span>
-                                <span class="min_temp">Min: 20°</span>
-                                <span class="weather_status">Cloudy</span>
-                            </div>
-
-                            <div class="weather_icon">
-                                <img src="img/02d@2x.png" alt="">
-                            </div>
-                        </div>
-                        
-                    </div>
-                </a>
-
-            </div>   
-    
-        </div>  
-    </section>`
-    
-    }      
-    
 }
