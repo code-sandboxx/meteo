@@ -26,7 +26,7 @@ export default class extends AbstractView{
                await this.loadData();
                this.country = this.cityData.features[0].properties.country;
                this.city = this.cityData.features[0].properties.city;
-               console.log(this.country, this.city, this.lat, this.lon)
+               //console.log(this.country, this.city, this.lat, this.lon)
                // Redirect to the dashboard route with lat and lon parameters
                navigateTo(`/dashboard/lat=${this.lat}&lon=${this.lon}&country=${this.country}&city=${this.city}`);               
 

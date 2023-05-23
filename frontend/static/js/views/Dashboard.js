@@ -19,10 +19,39 @@ export default class extends AbstractView{
             this.country = params.country;
             this.city = params.city;
         }
-        else{
-            navigateTo(`/location`);  
-        } 
+        else navigateTo(`/location`); 
+
+        const searchInput = document.querySelector(".search_input");  
+        const searchResultsContainer = document.querySelector(".search_results_container");
+        const searchButton = document.getElementById("btnSearch");
+
+        // the search results will be regenerated upon each character input
+     /*    searchInput.addEventListener("input", async (e) => {
+            if (document.activeElement === searchInput) {
+                if(e.target.value){
+                    const inputValue = e.target.value.trim();
+                    await this.loadSearchResults(inputValue);
+                }              
+            }            
+        }); */
+
+        // event listener for the submit button
+        searchButton.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const inputValue = searchInput.value.trim();
+            await this.loadSearchResults(inputValue);
+        });
+
+        // Checks if the clicked element is outside the search input and search results container and hides the results list
+        document.addEventListener("click", (e) => {                    
+            if (!searchInput.contains(e.target) && !searchResultsContainer.contains(e.target)) {
+               searchResultsContainer.classList.remove("show");
+               searchResultsContainer.classList.add("hidden");
+            }
+        })    
     }
+
+    //******************************************************/
 
     getGeolocation() {
         if ("geolocation" in navigator) {
@@ -38,11 +67,15 @@ export default class extends AbstractView{
             // geolocation is not available
             console.log("Geolocation is not supported by this browser.");
         }
-    } 
+    }   
 
-    async loadData() {
+    //******************************************************/
+
+    async loadCityImgData() {
+
         let lowercaseCityName = this.city.toLowerCase();
-        this.cityData = await this.getData(`https://api.teleport.org/api/urban_areas/slug:${lowercaseCityName}/images/`);
+        let formattedCityName = lowercaseCityName.replace(/\s+/g, '-'); // replacing spaces with hyphens - because the API only accepts this format
+        this.cityData = await this.getData(`https://api.teleport.org/api/urban_areas/slug:${formattedCityName}/images/`);
         
         // Extracts the large version of the city photo
         let photoUrl = this.cityData.photos[0].image.mobile;        
@@ -53,18 +86,85 @@ export default class extends AbstractView{
 
         // Append the image element to the DOM
         const photoContainer = document.querySelector("main");       
-        photoContainer.style.backgroundImage = `url(${photoUrl})`;
-       
+        photoContainer.style.backgroundImage = `url(${photoUrl})`;       
     }
+
+    //******************************************************/
 
     async getData(url){
         const response = await fetch(url)
         return response.json();             
     }   
 
+    //******************************************************/
+
+    async loadSearchResults(value) {      
+
+        const fetchedSearchResults = await this.getData(`https://api.geoapify.com/v1/geocode/search?text=${value}&lang=en&limit=10&type=city&format=json&apiKey=868dc020ef9a48648f958a38385f3626`);      
+
+        const searchResultsContainer = document.querySelector(".search_results_container");
+        //console.log(searchResultsContainer)
+        searchResultsContainer.innerHTML = ""; // clears from the previous searches
+      
+        fetchedSearchResults.results.forEach(searchResult => {
+
+            //console.log(searchResult.city, searchResult.country)
+            const searchItem = document.createElement("div"); // creates the container for each search result
+            searchItem.classList.add("search_result");  
+            const wrappingLink = document.createElement("a");
+            wrappingLink.href = "#";
+            wrappingLink.appendChild(searchItem); // wraps the div with the link
+
+            if (searchResult.city && searchResult.city.trim() !== "") {
+
+                //checking if all the properties exist, otherwise assigning an empty string value to them.
+                const district = searchResult.district && searchResult.district.trim() !== "" ? `${searchResult.district}, ` : "";
+
+                const municipality = searchResult.municipality && searchResult.municipality.trim() !== "" ? `${searchResult.municipality}, ` : "";
+
+                const county = searchResult.county && searchResult.county.trim() !== "" ? `${searchResult.county}, ` : "";
+
+                const province = searchResult.province && searchResult.province.trim() !== "" ? `${searchResult.province}, ` : "";
+
+                const state = searchResult.state && searchResult.state.trim() !== "" ? `${searchResult.state}, ` : "";
+
+                const country = searchResult.country && searchResult.country.trim() !== "" ? `${searchResult.country}` : "";
+            
+                //filling the search result item with the available city information
+                searchItem.textContent = `${district}${searchResult.city}, ${municipality}${county}${province}${state}${country}`;
+            }  
+            // if the city name is not provided in the search result- hide the empty div
+            else searchItem.style.display = "none";
+            
+            console.log(searchResult)
+           
+            searchResultsContainer.appendChild(wrappingLink);
+
+            //when user clicks on one of the search results
+            searchItem.addEventListener("click", async () => {           
+                this.city = searchResult.city; 
+                searchResultsContainer.classList.add("hidden");   
+                await this.loadCityImgData();           
+            });            
+        });    
+        
+        if (fetchedSearchResults.results.length > 0) {
+            searchResultsContainer.classList.remove("hidden");
+            searchResultsContainer.classList.add("show");
+            console.log(fetchedSearchResults.results.length);
+        } else {
+            searchResultsContainer.classList.add("hidden");
+            searchResultsContainer.classList.remove("show");
+        }
+
+    }    
+    
+
+    //******************************************************/
+
     async getHtml(){   
 
-        await this.loadData();
+        await this.loadCityImgData();
 
         return  `
         <section class="weather_tiles_section">

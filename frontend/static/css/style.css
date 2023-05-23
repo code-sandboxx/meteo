@@ -23,7 +23,6 @@ a{
 :root{
     --black: black;
     --primary-purple: rgb(38, 16, 63);
-    --purple-dark: rgba(55, 18, 97, 0.4);
     --primary-purple-transparent: rgba(54, 22, 88, 0.4);
     --white-transparent: rgba(255, 255, 255, 0.7);
     --black-semi-transparent:  rgba(0, 0, 0, 0.5);
@@ -32,6 +31,7 @@ a{
     --off-white: rgb(250, 247, 245);
     --brown: rgb(130, 30, 30);
     --light-orange: rgb(244, 164, 117);
+    --orange-semi-transparent: rgba(244, 164, 117, 0.5);
     --light-green: rgb(140, 234, 143);
     --light-blue: rgb(217, 248, 255);    
     --spacing-tiny: 5px;
@@ -191,6 +191,54 @@ main{
 }
 
 /*--------------------------------------*/
+/*         SEARCH RESULTS LIST          */
+/*--------------------------------------*/
+
+.search_results_container{
+   
+    position: absolute;
+    top: var(--spacing-tiny-small);
+    right: var(--spacing-small);
+    margin-top: var(--spacing-large);
+    background-color: var(--white-transparent);
+    backdrop-filter: blur(2px);
+    padding-left: var(--spacing-small);
+    padding-right: var(--spacing-small);
+    padding-top: var(--spacing-small);
+    padding-bottom: var(--spacing-small);
+    border-radius: var(--spacing-small);
+    box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+    z-index: 25;   
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+}
+
+.search_results_container.show {
+    max-height: 100vh; 
+}
+
+.search_result{
+    padding: var(--spacing-tiny-small);
+    border-radius: var(--spacing-tiny);
+    opacity: 0;
+    animation: fade-in 0.5s ease-in-out forwards;    
+}
+
+@keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+}
+
+.search_result:hover{
+    background-color: var(--orange-semi-transparent);    
+}    
+
+/*--------------------------------------*/
 /*               TOP BAR                */
 /*--------------------------------------*/
 
@@ -222,7 +270,7 @@ main{
 .search_bar input[type="search"]:focus{
     outline: none;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-    width: 700px;
+    width: 700px;    
 }
 
 .search_bar button{
@@ -284,8 +332,7 @@ main{
 }
  
 .details_wrapper > :nth-child(odd) {
-    background-color: var(--black-semi-transparent);
-    
+    background-color: var(--black-semi-transparent);    
 }
 
 .weather_icon img{
@@ -325,14 +372,14 @@ main{
 
 .weather_tile{
     margin-top: var(--spacing-medium);
-    margin-bottom: var(--spacing-medium);
-    border: 1px solid var(--purple-dark);
+    margin-bottom: var(--spacing-medium);    
     border-radius: var(--spacing-tiny-small);   
     background-color: var(--light-purple);    
     overflow: hidden;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
     transition: all 0.3s ease;
     backdrop-filter: blur(2px);
+    border: 1px solid var(--white-semi-transparent);
 }
 
 .weather_tile:hover{
@@ -342,7 +389,7 @@ main{
 }
 
 .tile_header_wrapper{
-    background-color: var(--purple-dark);
+    background-color: var(--primary-purple);
     padding: var(--spacing-small);       
 }
 
@@ -478,11 +525,20 @@ footer h1{
     line-height: var(--spacing-medium);
 }
 
+.search_result{
+    color: var(--black);
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+}
+
 /**************************************************/
 /*                    UTILITIES                   */
 /**************************************************/
 
-
+.hidden{
+    display: none;
+}
 
 
 /**************************************************/
