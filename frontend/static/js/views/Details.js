@@ -3,7 +3,22 @@ import AbstractView from "./AbstractView.js";
 export default class extends AbstractView{    
 
     constructor(params){
-        super(params)   
+        super(params);        
+        this.maxTemp = params.maxTemp;
+        this.minTemp = params.minTemp; 
+        this.city = decodeURIComponent(params.city);
+        this.weatherDescription = decodeURIComponent(params.wdesc); // to remove the encoding symbols such as %20 between words.
+        this.day = params.day; 
+        this.date = params.date; 
+        this.visibility = params.vis;
+        this.currentTemp = params.cTemp;
+        this.perceivedTemp = params.pTemp;
+        this.windSpeed = params.wind;
+        this.humidity = params.hum;
+        this.pressure = params.pres;
+        this.sunrise = decodeURIComponent(params.sunr);
+        this.sunset = decodeURIComponent(params.suns);
+        this.icon = params.icon;        
     }    
 
     async getHtml(){ 
@@ -11,32 +26,32 @@ export default class extends AbstractView{
             <div class="day_details">  
                 <div class="details">   
 
-                    <h1 class="city">Montreal</h1>  
+                    <h1 class="city">${this.city}</h1>  
                     <div class="header_wrapper">                   
 
                         <div class="details_header">
-                            <h2 class="day">Today</h2> 
-                            <h3 class="date">21/05/2023</h3>    
-                            <span class="weather_status_description">Clear</span> 
+                            <h2 class="day">${this.day}</h2> 
+                            <h3 class="date">${this.date}</h3>    
+                            <span class="weather_status_description">${this.weatherDescription}</span> 
                         </div>  
                         
                         <div class="weather_icon weather_icon_large">
-                            <img src="img/01d@2x (1).png" alt="">
+                            <img src="http://openweathermap.org/img/wn/${this.icon}@2x.png" alt="weather icon">
                         </div>
 
                     </div>    
                         
                     <div class="details_wrapper">                        
-                        <span class="current_temp">Current temperature: 24°</span>
-                        <span class="perceived_temp">Feels like: 18°</span>
-                        <span class="max_temp">Max temperature on this day: 25°</span>
-                        <span class="min_temp">Min temperature on this day: 15°</span>
-                        <span class="wind">Wind speed: 5 mph</span>
-                        <span class="humidity">Humidity: 69</span>
-                        <span class="visibility">Visibility: 1000</span>
-                        <span class="pressure">Pressure: 1018</span>
-                        <span class="sunrise">Sunrise: 6 a.m.</span>
-                        <span class="sunset">Sunset: 8 p.m.</span>  
+                        <span class="current_temp">Current temperature: ${this.currentTemp} °</span>
+                        <span class="perceived_temp">Feels like: ${this.perceivedTemp} °</span>
+                        <span class="max_temp">Max temperature on this day: ${this.maxTemp} °</span>
+                        <span class="min_temp">Min temperature on this day: ${this.minTemp} °</span>
+                        <span class="wind">Wind speed: ${this.windSpeed} m/s</span>
+                        <span class="humidity">Humidity: ${this.humidity} %</span>
+                        <span class="visibility">Visibility: ${this.visibility} m</span>
+                        <span class="pressure">Pressure:  ${this.visibility} hPa</span>
+                        <span class="sunrise">Sunrise: ${this.sunrise}</span>
+                        <span class="sunset">Sunset: ${this.sunset}</span>  
                     </div>   
                 </div>
             </div>

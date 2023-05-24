@@ -13,7 +13,7 @@ export default class extends AbstractView{
         this.country = null;
         this.city = null;  
         this.weatherData;      
-        this.weatherProcessedData;
+        this.weatherProcessedData;        
          
         if (params && params.lat && params.lon && params.country && params.city) {
             this.lat = params.lat;
@@ -28,14 +28,14 @@ export default class extends AbstractView{
         const searchButton = document.getElementById("btnSearch");
 
         // the search results will be regenerated upon each character input
-     /*    searchInput.addEventListener("input", async (e) => {
+         searchInput.addEventListener("input", async (e) => {
             if (document.activeElement === searchInput) {
                 if(e.target.value){
                     const inputValue = e.target.value.trim();
                     await this.loadSearchResults(inputValue);
                 }              
             }            
-        }); */
+        });
 
         // event listener for the submit button
         searchButton.addEventListener("click", async (e) => {
@@ -50,7 +50,7 @@ export default class extends AbstractView{
                searchResultsContainer.classList.remove("show");
                searchResultsContainer.classList.add("hidden");
             }
-        })    
+        })      
     }
 
     //******************************************************/
@@ -75,8 +75,10 @@ export default class extends AbstractView{
 
     async loadCityImgData() {
 
-        let lowercaseCityName = this.city.toLowerCase();
+        let lowercaseCityName = decodeURIComponent(this.city.toLowerCase());
         let formattedCityName = lowercaseCityName.replace(/\s+/g, '-'); // replacing spaces with hyphens - because the API only accepts this format
+
+        console.log(formattedCityName)
         this.cityData = await this.getData(`https://api.teleport.org/api/urban_areas/slug:${formattedCityName}/images/`);
         
         // Extracts the large version of the city photo if exists - otherwise uses a default image
@@ -151,6 +153,7 @@ export default class extends AbstractView{
                 this.lon = searchResult.lon;       
 
                 searchResultsContainer.classList.add("hidden");   
+                console.log(this.city)
                 navigateTo(`/dashboard/lat=${this.lat}&lon=${this.lon}&country=${this.country}&city=${this.city}`);       
             });            
         });    
@@ -176,11 +179,19 @@ export default class extends AbstractView{
     
     //******************************************************/
     
-    handleWeatherData(weatherData){
-
-        console.log(weatherData)
+    handleWeatherData(weatherData){        
 
         let dates = weatherData.list.map(item => item.dt_txt.split(" ")[0]); // extracts all the dates without time
+
+        // sunset and sunrise time extraction
+        const unixSunrise = weatherData.city.sunrise;
+        const dateSunrise = new Date(unixSunrise * 1000);
+        const formattedDateSunrise = dateSunrise.toLocaleTimeString();
+
+        const unixSunset = weatherData.city.sunset;
+        const dateSunset = new Date(unixSunset * 1000);
+        const formattedDateSunset = dateSunset.toLocaleTimeString();
+        
 
         let uniqueDates = [...new Set(dates)]; // removes duplicates        
 
@@ -219,20 +230,21 @@ export default class extends AbstractView{
 
         this.weatherProcessedData = {
             maxTempForEachDay: maxTempForEachDay,
-            minTempForEachDay: minTempForEachDay
+            minTempForEachDay: minTempForEachDay,
+            formattedDateSunrise: formattedDateSunrise,
+            formattedDateSunset: formattedDateSunset
         };
     }
     
 
     //******************************************************/
 
-    async getHtml(){   
-
-        console.log(this.weatherProcessedData);
-        console.log(this.lat, this.lon, this.weatherData, this.country, this.city )
+    async getHtml(){  
 
         await this.loadCityImgData();      
         await this.fetchWeatherData();  
+
+        console.log(this.weatherProcessedData)
     
         let weatherTilesHtml = this.weatherProcessedData.maxTempForEachDay.map((data, index) => {
     
@@ -246,10 +258,11 @@ export default class extends AbstractView{
                     return "Today";
                 }
                 return daysOfWeek[date.getDay()]; // returning the day of the week by index that is returned by getDay()
-            };
+            };           
     
             return `
-                <a href="#">    
+                <a href="/details/lat=${encodeURIComponent(this.lat)}&lon=${encodeURIComponent(this.lon)}&country=${encodeURIComponent(this.country)}&city=${encodeURIComponent(this.city)}&maxTemp=${encodeURIComponent(this.weatherProcessedData.maxTempForEachDay[index].main.temp_max)}&minTemp=${encodeURIComponent(this.weatherProcessedData.minTempForEachDay[index].main.temp_min)}&wdesc=${encodeURIComponent(data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1))}&day=${formatDay(data.dt_txt)}&date=${data.dt_txt.split(" ")[0]}&vis=${data.visibility}&cTemp=${data.main.temp}&pTemp=${data.main.feels_like}&wind=${data.wind.speed}&hum=${data.main.humidity}&pres=${data.main.pressure}&sunr=${this.weatherProcessedData.formattedDateSunrise}&suns=${this.weatherProcessedData.formattedDateSunset}&icon=${data.weather[0].icon}" data-link>    
+
                     <div class="weather_tile">
                         <div class="tile_header_wrapper">
                             <h2 class="day">${formatDay(data.dt_txt)}</h2>
@@ -259,13 +272,13 @@ export default class extends AbstractView{
                         <div class="tile_details_container_wrapper">                 
     
                             <div class="tile_details_container"> 
-                                <span class="max_temp">Max: ${data.main.temp_max}°</span>
+                                <span class="max_temp">Max: ${this.weatherProcessedData.maxTempForEachDay[index].main.temp_max}°</span>
                                 <span class="min_temp">Min: ${this.weatherProcessedData.minTempForEachDay[index].main.temp_min}°</span>
-                                <span class="weather_status">${data.weather[0].description}</span>
+                                <span class="weather_status">${data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1)}</span>
                             </div>
     
                             <div class="weather_icon">
-                                <img src="http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="">
+                                <img src="http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="wether icon">
                             </div>
                         </div>
                     </div>

@@ -374,7 +374,7 @@ main{
     padding-bottom: var(--spacing-medium);    
     backdrop-filter: blur(2px);
     justify-content: center;
-    overflow: hidden;    
+    overflow: hidden;  
 }
 
 .weather_tiles_wrapper h1{   

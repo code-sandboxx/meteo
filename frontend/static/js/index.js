@@ -25,7 +25,8 @@ const router = async () => {
         {path: "/", views: [Dashboard]},        
         {path: "/home", views: [Dashboard]},
         {path: "/location", views: [LocationView]},
-        {path: "/dashboard/lat=:lat&lon=:lon&country=:country&city=:city", views: [Details, Dashboard] }
+        {path: "/dashboard/lat=:lat&lon=:lon&country=:country&city=:city", views: [Details, Dashboard] },
+        {path: "/details/lat=:lat&lon=:lon&country=:country&city=:city&maxTemp=:maxTemp&minTemp=:minTemp&wdesc=:wdesc&day=:day&date=:date&vis=:vis&cTemp=:cTemp&pTemp=:pTemp&wind=:wind&hum=:hum&pres=:pres&sunr=:sunr&suns=:suns&icon=:icon", views: [Details, Dashboard] }
     ]
 
     // 2 - match function
@@ -81,8 +82,9 @@ document.addEventListener("DOMContentLoaded", () =>{
         if(e.target.matches("[data-link]")){
             e.preventDefault()   // prevents the navigation by default
             navigateTo(e.target.href) // redirects to navigateTo - prevents the page reload
+            console.log(e.target.href)
         }
     })
-
+    
     router()
 })
