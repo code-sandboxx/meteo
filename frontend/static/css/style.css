@@ -107,7 +107,7 @@ a{
     grid-template-columns: repeat(3, 250px [col-start]);  
     overflow-y: hidden;
     white-space: nowrap;
-    column-gap: var(--spacing-small-medium);
+    column-gap: var(--spacing-medium);
     justify-content: center;
 }
 

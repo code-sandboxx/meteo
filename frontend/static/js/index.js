@@ -3,6 +3,7 @@ import LocationView from "./views/LocationView.js"
 import Dashboard from "./views/Dashboard.js"
 import Details from "./views/Details.js"
 
+
 // 10 - regex
 const pathToRegex = path => new RegExp("^"+ path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$") // transforms a path string into a regular expression that can be used to match routes.
 
@@ -75,16 +76,20 @@ export const navigateTo = url => {
 }    
 
 // 4 - execute the route
-document.addEventListener("DOMContentLoaded", () =>{
-    
-    // 6 - SPA link    
+
+document.addEventListener("DOMContentLoaded", () => {   
+
     document.body.addEventListener("click", e => {
-        if(e.target.matches("[data-link]")){
+        
+        let linkElement = e.target.closest('[data-link]');
+
+        if(linkElement){
             e.preventDefault()   // prevents the navigation by default
-            navigateTo(e.target.href) // redirects to navigateTo - prevents the page reload
-            console.log(e.target.href)
+            
+            navigateTo(linkElement.href) // redirects to navigateTo - prevents the page reload
+            
         }
-    })
-    
-    router()
-})
+    });
+
+    router();
+});

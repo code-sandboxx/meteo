@@ -3,7 +3,9 @@ import AbstractView from "./AbstractView.js";
 export default class extends AbstractView{    
 
     constructor(params){
-        super(params);        
+        
+        super(params);     
+
         this.maxTemp = params.maxTemp;
         this.minTemp = params.minTemp; 
         this.city = decodeURIComponent(params.city);
@@ -18,7 +20,7 @@ export default class extends AbstractView{
         this.pressure = params.pres;
         this.sunrise = decodeURIComponent(params.sunr);
         this.sunset = decodeURIComponent(params.suns);
-        this.icon = params.icon;        
+        this.icon = decodeURIComponent(params.icon);        
     }    
 
     async getHtml(){ 
@@ -56,6 +58,5 @@ export default class extends AbstractView{
                 </div>
             </div>
         `
-    }      
-    
+    }          
 }

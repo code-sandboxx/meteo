@@ -13,7 +13,7 @@ export default class extends AbstractView{
         this.country = null;
         this.city = null;  
         this.weatherData;      
-        this.weatherProcessedData;        
+        this.weatherProcessedData;               
          
         if (params && params.lat && params.lon && params.country && params.city) {
             this.lat = params.lat;
@@ -50,26 +50,9 @@ export default class extends AbstractView{
                searchResultsContainer.classList.remove("show");
                searchResultsContainer.classList.add("hidden");
             }
-        })      
-    }
-
-    //******************************************************/
-
-    getGeolocation() {
-        if ("geolocation" in navigator) {
-            // geolocation is available
-            navigator.geolocation.getCurrentPosition((position) => {
-              this.lat = position.coords.latitude;
-              this.lon = position.coords.longitude;
-              console.log(`Latitude: ${this.lat}, Longitude: ${this.lon}`);
-            }, function(error) {
-              console.error("Error occurred while fetching geolocation", error);
-            });
-        } else {
-            // geolocation is not available
-            console.log("Geolocation is not supported by this browser.");
-        }
-    }   
+        })   
+        
+    }    
 
     //******************************************************/
 
@@ -77,8 +60,7 @@ export default class extends AbstractView{
 
         let lowercaseCityName = decodeURIComponent(this.city.toLowerCase());
         let formattedCityName = lowercaseCityName.replace(/\s+/g, '-'); // replacing spaces with hyphens - because the API only accepts this format
-
-        console.log(formattedCityName)
+        
         this.cityData = await this.getData(`https://api.teleport.org/api/urban_areas/slug:${formattedCityName}/images/`);
         
         // Extracts the large version of the city photo if exists - otherwise uses a default image
@@ -152,7 +134,7 @@ export default class extends AbstractView{
                 this.lat = searchResult.lat;
                 this.lon = searchResult.lon;       
 
-                searchResultsContainer.classList.add("hidden");   
+                searchResultsContainer.classList.add("hidden");  // hide the search results container 
                 console.log(this.city)
                 navigateTo(`/dashboard/lat=${this.lat}&lon=${this.lon}&country=${this.country}&city=${this.city}`);       
             });            
@@ -172,7 +154,7 @@ export default class extends AbstractView{
 
     async fetchWeatherData() {
 
-        this.weatherData = await this.getData(`https://api.openweathermap.org/data/2.5/forecast?lat=${this.lat}&lon=${this.lon}&appid=3fe699cb74f81a039afe2bbf82846de7&units=metric`);
+        this.weatherData = await this.getData(`https://api.openweathermap.org/data/2.5/forecast?lat=${this.lat}&lon=${this.lon}&appid=4767950b520f4f2d7cee1dcf3010ddf8&units=metric`);
 
         this.handleWeatherData(this.weatherData);
     }
@@ -183,7 +165,7 @@ export default class extends AbstractView{
 
         let dates = weatherData.list.map(item => item.dt_txt.split(" ")[0]); // extracts all the dates without time
 
-        // sunset and sunrise time extraction
+        // sunset and sunrise time extraction and conversion
         const unixSunrise = weatherData.city.sunrise;
         const dateSunrise = new Date(unixSunrise * 1000);
         const formattedDateSunrise = dateSunrise.toLocaleTimeString();
@@ -234,6 +216,7 @@ export default class extends AbstractView{
             formattedDateSunrise: formattedDateSunrise,
             formattedDateSunset: formattedDateSunset
         };
+     
     }
     
 
@@ -242,23 +225,21 @@ export default class extends AbstractView{
     async getHtml(){  
 
         await this.loadCityImgData();      
-        await this.fetchWeatherData();  
+        await this.fetchWeatherData(); 
 
-        console.log(this.weatherProcessedData)
-    
-        let weatherTilesHtml = this.weatherProcessedData.maxTempForEachDay.map((data, index) => {
-    
-            const formatDay = (dateString) => {
-                const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                const date = new Date(dateString);
-                const today = new Date();
+        const formatDay = (dateString) => {
+            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const date = new Date(dateString);
+            const today = new Date();
 
-                // displays "Today" if the date is current
-                if (date.toDateString() === today.toDateString()) {
-                    return "Today";
-                }
-                return daysOfWeek[date.getDay()]; // returning the day of the week by index that is returned by getDay()
-            };           
+            // displays "Today" if the date is current
+            if (date.toDateString() === today.toDateString()) {
+                return "Today";
+            }
+            return daysOfWeek[date.getDay()]; // returning the day of the week by index that is returned by getDay()
+        };  
+    
+        let weatherTilesHtml = this.weatherProcessedData.maxTempForEachDay.map((data, index) => {         
     
             return `
                 <a href="/details/lat=${encodeURIComponent(this.lat)}&lon=${encodeURIComponent(this.lon)}&country=${encodeURIComponent(this.country)}&city=${encodeURIComponent(this.city)}&maxTemp=${encodeURIComponent(this.weatherProcessedData.maxTempForEachDay[index].main.temp_max)}&minTemp=${encodeURIComponent(this.weatherProcessedData.minTempForEachDay[index].main.temp_min)}&wdesc=${encodeURIComponent(data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1))}&day=${formatDay(data.dt_txt)}&date=${data.dt_txt.split(" ")[0]}&vis=${data.visibility}&cTemp=${data.main.temp}&pTemp=${data.main.feels_like}&wind=${data.wind.speed}&hum=${data.main.humidity}&pres=${data.main.pressure}&sunr=${this.weatherProcessedData.formattedDateSunrise}&suns=${this.weatherProcessedData.formattedDateSunset}&icon=${data.weather[0].icon}" data-link>    
@@ -284,17 +265,16 @@ export default class extends AbstractView{
                     </div>
                 </a>
             `;
-        }).join("");
-    
+        }).join(""); 
+       
         return  `
         <section class="weather_tiles_section">
             <div class="weather_tiles_wrapper">             
-                <h1>5-Day Weather Forecast</h1>
+                <h1>6-Day Weather Forecast</h1>
                 <div class="weather_tiles_container">            
                     ${weatherTilesHtml}
                 </div>   
             </div>  
-        </section>`
-    }
-        
+        </section>`  
+    }        
 }
